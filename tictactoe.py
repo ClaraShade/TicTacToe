@@ -69,3 +69,4 @@ while board.picture[mark_row][mark_column].is_empty != True:
 
 board.picture[mark_row][mark_column].mark_x()
 print(board.picture)
+#sth
