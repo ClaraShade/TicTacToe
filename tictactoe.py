@@ -50,12 +50,13 @@ board = createboard()
 for i in board.picture:
     print(i)
 
+
 def to_mark_x():
     print("Mark x in: ")
     mark_row = int(input("row: "))-1
     mark_column = int(input("column: "))-1
 
-    while board.picture[mark_row][mark_column].is_empty != True:
+    while not board.picture[mark_row][mark_column].is_empty:
         print("This square is not empty! Chose another")
         print("Mark x in: ")
         mark_row = int(input("row: ")) - 1
@@ -66,12 +67,13 @@ def to_mark_x():
     for i in board.picture:
         print(i)
 
+
 def to_mark_o():
     print("Mark o in: ")
     mark_row = int(input("row: "))-1
     mark_column = int(input("column: "))-1
 
-    while board.picture[mark_row][mark_column].is_empty != True:
+    while not board.picture[mark_row][mark_column].is_empty:
         print("This square is not empty! Chose another")
         print("Mark o in: ")
         mark_row = int(input("row: ")) - 1
@@ -81,6 +83,7 @@ def to_mark_o():
     print("Thank you! See your board below: ")
     for i in board.picture:
         print(i)
+
 
 def start_game():
     print(board.squares)
@@ -94,5 +97,6 @@ def start_game():
         else:
             break
     print("Thank you! Your game has ended!")
+
 
 start_game()
