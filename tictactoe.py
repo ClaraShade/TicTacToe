@@ -3,6 +3,7 @@ class Board:
         self.length = side
         self.squares = side**2
         self.picture = []
+        self.filled = 0
 
 
 class Square:
@@ -49,22 +50,16 @@ board = createboard()
 for i in board.picture:
     print(i)
 
-#print(board.picture[0][0].col)
-
 def to_mark_x():
     print("Mark x in: ")
     mark_row = int(input("row: "))-1
     mark_column = int(input("column: "))-1
-#print(mark_row)
-#print(mark_column)
 
     while board.picture[mark_row][mark_column].is_empty != True:
         print("This square is not empty! Chose another")
         print("Mark x in: ")
         mark_row = int(input("row: ")) - 1
         mark_column = int(input("column: ")) - 1
-    #print(mark_row)
-    #print(mark_column)
 
     board.picture[mark_row][mark_column].mark_x()
     print("Thank you! See your board below: ")
@@ -75,21 +70,29 @@ def to_mark_o():
     print("Mark o in: ")
     mark_row = int(input("row: "))-1
     mark_column = int(input("column: "))-1
-#print(mark_row)
-#print(mark_column)
 
     while board.picture[mark_row][mark_column].is_empty != True:
         print("This square is not empty! Chose another")
         print("Mark o in: ")
         mark_row = int(input("row: ")) - 1
         mark_column = int(input("column: ")) - 1
-    #print(mark_row)
-    #print(mark_column)
 
     board.picture[mark_row][mark_column].mark_o()
     print("Thank you! See your board below: ")
     for i in board.picture:
         print(i)
 
-to_mark_x()
-to_mark_o()
+def start_game():
+    print(board.squares)
+    while board.filled < board.squares:
+        to_mark_x()
+        board.filled = board.filled + 1
+        print(board.filled)
+        if board.filled < board.squares:
+            to_mark_o()
+            board.filled = board.filled + 1
+        else:
+            break
+    print("Thank you! Your game has ended!")
+
+start_game()
