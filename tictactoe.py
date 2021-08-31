@@ -46,10 +46,19 @@ def createboard():
 
 
 board = createboard()
-
+rowcount = 0
 for i in board.picture:
-    print(i)
+    rowcount = rowcount +1
+    if rowcount <10:
+        print("Row "+str(rowcount)+" "+str(i))
+    else:
+        print("Row" + str(rowcount) + " " + str(i))
 
+
+columns = "Column:"
+for i in range(1, board.length+1):
+    columns = columns+str(i)+", "
+print(columns)
 
 def to_mark_x():
     print("Mark x in: ")
