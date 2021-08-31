@@ -85,18 +85,112 @@ def to_mark_o():
         print(i)
 
 
-def start_game():
-    print(board.squares)
-    while board.filled < board.squares:
-        to_mark_x()
-        board.filled = board.filled + 1
-        print(board.filled)
-        if board.filled < board.squares:
-            to_mark_o()
-            board.filled = board.filled + 1
-        else:
-            break
+def end_game():
     print("Thank you! Your game has ended!")
+    exit()
 
 
-start_game()
+def check_rows():
+    for i in range(board.length):
+        counter = 0
+        for j in range(board.length):
+            mark = str(board.picture[i][j])
+            if mark == 'x':
+                counter = counter + 1
+            elif mark == 'o':
+                counter = counter - 1
+            else:
+                pass
+        if counter == int(board.length):
+            print("Congratulations! The x-player won!")
+            end_game()
+        elif counter == int(board.length) * -1:
+            print("Congratulations! The o-player won!")
+            end_game()
+        else:
+            pass
+
+
+def check_cols():
+    for i in range(board.length):
+        counter = 0
+        for j in range(board.length):
+            mark = str(board.picture[j][i])
+            if mark == 'x':
+                counter = counter + 1
+            elif mark == 'o':
+                counter = counter - 1
+            else:
+                pass
+        if counter == int(board.length):
+            print("Congratulations! The x-player won!")
+            end_game()
+        elif counter == int(board.length) * -1:
+            print("Congratulations! The o-player won!")
+            end_game()
+        else:
+            pass
+
+
+def check_diagonal_l():
+    counter = 0
+    for i in range(board.length):
+        mark = str(board.picture[i][i])
+        if mark == 'x':
+            counter = counter + 1
+        elif mark == 'o':
+            counter = counter - 1
+        else:
+            pass
+    if counter == int(board.length):
+        print("Congratulations! The x-player won!")
+        end_game()
+    elif counter == int(board.length) * -1:
+        print("Congratulations! The o-player won!")
+        end_game()
+    else:
+        pass
+
+
+def check_diagonal_r():
+    counter = 0
+    reversed_diag = []
+    for i in range(board.length-1, -1, -1):
+        reversed_diag.append(board.picture[i])
+    for j in range(board.length):
+        mark = str(reversed_diag[j][j])
+        if mark == 'x':
+            counter = counter + 1
+        elif mark == 'o':
+            counter = counter - 1
+        else:
+            pass
+    if counter == int(board.length):
+        print("Congratulations! The x-player won!")
+        end_game()
+    elif counter == int(board.length) * -1:
+        print("Congratulations! The o-player won!")
+        end_game()
+    else:
+        pass
+
+
+def win_check():
+    check_rows()
+    check_cols()
+    check_diagonal_l()
+    check_diagonal_r()
+
+
+while board.filled < board.squares:
+    to_mark_x()
+    board.filled = board.filled + 1
+    win_check()
+    if board.filled < board.squares:
+        to_mark_o()
+        board.filled = board.filled + 1
+        win_check()
+    else:
+        break
+
+end_game()
