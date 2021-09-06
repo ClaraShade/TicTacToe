@@ -1,10 +1,10 @@
-class Board:
-    def __init__(self, side):
-        self.length = side
-        self.squares = side**2
-        self.picture = []
-        self.filled = 0
+from enum import Enum
 
+class Result(Enum):
+    win_x = 1
+    win_o = 2
+    not_finished = 3
+    draw = 4
 
 class Square:
     def __init__(self, num, col, row):
@@ -17,81 +17,143 @@ class Square:
     def __repr__(self):
         return self.char
 
-    def mark_x(self):
+    def set_x(self):
         self.is_empty = False
         self.char = 'x'
 
-    def mark_o(self):
+    def set_o(self):
         self.is_empty = False
         self.char = 'o'
 
+    def is_available(self):
+        return self.is_empty
 
-def createboard():
-    side = int(input("How wide board you want to create? Please, type natural number: "))
-    new_board = Board(side)
-    square_index = 1
-    for column in range(1, new_board.length+1):
-        row_list = []
-        for row in range(1, new_board.length+1):
-            new_square = Square(square_index, column, row)
-            print(new_square.num, new_square.col, new_square.row, new_square)
-            if square_index < new_board.squares:
-                square_index = square_index+1
-            row_list.append(new_square)
-        new_board.picture.append(row_list)
+class Board:
+    def __init__(self, side):
+        self.length = side
+        self.squares = []
+        self.filled = 0
+        self.full = False
+        square_index = 1
+        for column in range(1, self.length + 1):
+            row_list = []
+            for row in range(1, self.length + 1):
+                new_square = Square(square_index, column, row)
+                if square_index < self.length**2:
+                    square_index = square_index + 1
+                row_list.append(new_square)
+            self.squares.append(row_list)
 
-    print("Congratulations! You created " + str(side) + "-sided board, which has " + str(square_index) + " squares.")
-    print("See your board below:")
-    return new_board
+    def is_full(self):
+        if self.filled == self.length**2:
+            self.full = True
 
+    def printme(self):
+        rowcount = 0
+        for i in self.squares:
+            rowcount = rowcount + 1
+            if rowcount < 10:
+                print("Row "+str(rowcount)+" "+str(i))
+            else:
+                print("Row" + str(rowcount) + " " + str(i))
+        columns = "Column:"
+        for i in range(1, self.length+1):
+            columns = columns+str(i)+", "
+        print(columns)
 
-board = createboard()
-rowcount = 0
-for i in board.picture:
-    rowcount = rowcount +1
-    if rowcount <10:
-        print("Row "+str(rowcount)+" "+str(i))
+    def mark_x(self, mark_row, mark_column):
+        self.squares[mark_row][mark_column].set_x()
+        self.filled = self.filled + 1
+
+    def mark_o(self, mark_row, mark_column):
+        self.squares[mark_row][mark_column].set_o()
+        self.filled = self.filled + 1
+
+    def check_rows(self): #czy da się zrobić niestatyczną funkcję #a może ify
+        for i in range(self.length):
+            counter = 0
+            for j in range(self.length):
+                mark = str(self.squares[i][j])
+                if mark == 'x':
+                    counter = counter + 1
+                elif mark == 'o':
+                    counter = counter - 1
+                else:
+                    pass
+            if counter == int(self.length):
+                return 1
+            elif counter == int(self.length) * -1:
+                return 2
+            else:
+                return 3
+
+    def check_cols(self):
+        for i in range(self.length):
+            counter = 0
+            for j in range(self.length):
+                mark = str(self.squares[j][i])
+                if mark == 'x':
+                    counter = counter + 1
+                elif mark == 'o':
+                    counter = counter - 1
+                else:
+                    pass
+            if counter == int(self.length):
+                return 1
+            elif counter == int(self.length) * -1:
+                return 2
+            else:
+                return 3
+
+    def check_diagonal_l(self):
+        counter = 0
+        for i in range(self.length):
+            mark = str(self.squares[i][i])
+            if mark == 'x':
+                counter = counter + 1
+            elif mark == 'o':
+                counter = counter - 1
+            else:
+                pass
+        if counter == int(self.length):
+            return 1
+        elif counter == int(self.length) * -1:
+            return 2
+        else:
+            return 3
+
+    def check_diagonal_r(self):
+        counter = 0
+        for i in range(self.length):
+            mark = str(self.squares[i][i*-1-1])
+            if mark == 'x':
+                counter = counter + 1
+            elif mark == 'o':
+                counter = counter - 1
+            else:
+                pass
+        if counter == int(self.length):
+            return 1
+        elif counter == int(self.length) * -1:
+            return 2
+        else:
+            return 3
+
+def win_check():
+    result = new_board.check_rows()
+    if result !=3:
+        end_game()
     else:
-        print("Row" + str(rowcount) + " " + str(i))
-
-
-columns = "Column:"
-for i in range(1, board.length+1):
-    columns = columns+str(i)+", "
-print(columns)
-
-def to_mark_x():
-    print("Mark x in: ")
-    mark_row = int(input("row: "))-1
-    mark_column = int(input("column: "))-1
-
-    while not board.picture[mark_row][mark_column].is_empty:
-        print("This square is not empty! Chose another")
-        print("Mark x in: ")
-        mark_row = int(input("row: ")) - 1
-        mark_column = int(input("column: ")) - 1
-
-    board.picture[mark_row][mark_column].mark_x()
-    print("Thank you! See your board below: ")
-    for i in board.picture:
-        print(i)
-
-
-def to_mark_o():
-    print("Mark o in: ")
-    mark_row = int(input("row: "))-1
-    mark_column = int(input("column: "))-1
-
-    while not board.picture[mark_row][mark_column].is_empty:
-        print("This square is not empty! Chose another")
-        print("Mark o in: ")
-        mark_row = int(input("row: ")) - 1
-        mark_column = int(input("column: ")) - 1
-
-    board.picture[mark_row][mark_column].mark_o()
-    print("Thank you! See your board below: ")
-    for i in board.picture:
-        print(i)
+        result = new_board.check_cols()
+        if result !=3:
+            end_game()
+        else:
+            result = new_board.check_diagonal_l()
+            if result !=3:
+                end_game()
+            else:
+                result = new_board.check_diagonal_r()
+    return result
 
 
 def end_game():
@@ -99,107 +161,74 @@ def end_game():
     exit()
 
 
-def check_rows():
-    for i in range(board.length):
-        counter = 0
-        for j in range(board.length):
-            mark = str(board.picture[i][j])
-            if mark == 'x':
-                counter = counter + 1
-            elif mark == 'o':
-                counter = counter - 1
+def play():
+    outcome = win_check()
+    while outcome == 3:
+        print("Mark x in: ")
+        mark_row = int(input("row: "))-1
+        mark_column = int(input("column: "))-1
+
+        while not new_board.squares[mark_row][mark_column].is_empty:
+            print("This square is not empty! Chose another")
+            print("Mark x in: ")
+            mark_row = int(input("row: ")) - 1
+            mark_column = int(input("column: ")) - 1
+
+        new_board.mark_x(mark_row, mark_column)
+        print("Thank you! See your board below: ")
+        new_board.printme()
+
+        outcome = win_check()
+
+        if outcome == 3:
+            print("Mark o in: ")
+            mark_row = int(input("row: "))-1
+            mark_column = int(input("column: "))-1
+
+            while not new_board.squares[mark_row][mark_column].is_empty:
+                print("This square is not empty! Chose another")
+                print("Mark o in: ")
+                mark_row = int(input("row: ")) - 1
+                mark_column = int(input("column: ")) - 1
+
+            new_board.mark_o(mark_row, mark_column)
+            print("Thank you! See your board below: ")
+            new_board.printme()
+            outcome = win_check()
+            if outcome == 2:
+                end_game()
             else:
                 pass
-        if counter == int(board.length):
-            print("Congratulations! The x-player won!")
-            end_game()
-        elif counter == int(board.length) * -1:
-            print("Congratulations! The o-player won!")
-            end_game()
-        else:
-            pass
 
 
-def check_cols():
-    for i in range(board.length):
-        counter = 0
-        for j in range(board.length):
-            mark = str(board.picture[j][i])
-            if mark == 'x':
-                counter = counter + 1
-            elif mark == 'o':
-                counter = counter - 1
-            else:
-                pass
-        if counter == int(board.length):
-            print("Congratulations! The x-player won!")
-            end_game()
-        elif counter == int(board.length) * -1:
-            print("Congratulations! The o-player won!")
-            end_game()
-        else:
-            pass
+#def outcome():
+#    result = win_check()
+#    if result == Result.win_x:
+#       print("Congratulations! The x-player won!")
+#        end_game()
+#    elif result == Result.win_o:
+#        print("Congratulations! The o-player won!")
+#        end_game()
+#    elif result == Result.draw:
+#        print("It's a draw!")
+#        end_game()
+#    else:
+#        print("Next move!")
 
-
-def check_diagonal_l():
-    counter = 0
-    for i in range(board.length):
-        mark = str(board.picture[i][i])
-        if mark == 'x':
-            counter = counter + 1
-        elif mark == 'o':
-            counter = counter - 1
-        else:
-            pass
-    if counter == int(board.length):
-        print("Congratulations! The x-player won!")
-        end_game()
-    elif counter == int(board.length) * -1:
-        print("Congratulations! The o-player won!")
-        end_game()
-    else:
-        pass
-
-
-def check_diagonal_r():
-    counter = 0
-    reversed_diag = []
-    for i in range(board.length-1, -1, -1):
-        reversed_diag.append(board.picture[i])
-    for j in range(board.length):
-        mark = str(reversed_diag[j][j])
-        if mark == 'x':
-            counter = counter + 1
-        elif mark == 'o':
-            counter = counter - 1
-        else:
-            pass
-    if counter == int(board.length):
-        print("Congratulations! The x-player won!")
-        end_game()
-    elif counter == int(board.length) * -1:
-        print("Congratulations! The o-player won!")
-        end_game()
-    else:
-        pass
-
-
-def win_check():
-    check_rows()
-    check_cols()
-    check_diagonal_l()
-    check_diagonal_r()
-
-
-while board.filled < board.squares:
-    to_mark_x()
-    board.filled = board.filled + 1
-    win_check()
-    if board.filled < board.squares:
-        to_mark_o()
-        board.filled = board.filled + 1
-        win_check()
-    else:
+while True:
+    try:
+        side = int(input("How wide board you want to create? Please, type natural number greater than 1: "))
+        while side < 2:
+            print("You think you are a rebel, huh? Nice try!")
+            side = int(input("Please, type natural number: "))
         break
+    except ValueError:
+        print("We are not great in math, are we? N-A-T-U-R-A-L number!")
 
-end_game()
+
+new_board = Board(side)
+print("Congratulations! You created " + str(side) + "-sided board, which has " + str(side**2) + " squares.")
+print("See your board below:")
+new_board.printme()
+
+play()
