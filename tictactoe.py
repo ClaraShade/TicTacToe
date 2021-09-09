@@ -1,10 +1,12 @@
 from enum import Enum
 
+
 class Result(Enum):
     win_x = 1
     win_o = 2
     not_finished = 3
     draw = 4
+
 
 class Square:
     def __init__(self, num, col, row):
@@ -25,8 +27,6 @@ class Square:
         self.is_empty = False
         self.char = 'o'
 
-    def is_available(self):
-        return self.is_empty
 
 class Board:
     def __init__(self, side):
@@ -44,10 +44,6 @@ class Board:
                     square_index = square_index + 1
                 row_list.append(new_square)
             self.squares.append(row_list)
-
-    def is_full(self):
-        if self.filled == self.length**2:
-            self.full = True#return
 
     def printme(self):
         rowcount = 0
@@ -178,6 +174,11 @@ class Board:
                     pass
                 else:
                     self.check_diagonal_r()
+                    if self.state == Result.not_finished:
+                        if self.filled == self.length ** 2:
+                            self.state = Result.draw
+                        else:
+                            pass
 
 
 def outcome(board):
