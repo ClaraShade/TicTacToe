@@ -34,6 +34,7 @@ class Board:
         self.squares = []
         self.filled = 0
         self.full = False
+        self.state = Result.not_finished
         square_index = 1
         for column in range(1, self.length + 1):
             row_list = []
@@ -46,7 +47,7 @@ class Board:
 
     def is_full(self):
         if self.filled == self.length**2:
-            self.full = True
+            self.full = True#return
 
     def printme(self):
         rowcount = 0
@@ -69,7 +70,7 @@ class Board:
         self.squares[mark_row][mark_column].set_o()
         self.filled = self.filled + 1
 
-    def check_rows(self): #czy da się zrobić niestatyczną funkcję #a może ify
+    def check_rows(self):
         for i in range(self.length):
             counter = 0
             for j in range(self.length):
@@ -81,11 +82,17 @@ class Board:
                 else:
                     pass
             if counter == int(self.length):
-                return 1
+                self.state = Result.win_x
+                return self.state
             elif counter == int(self.length) * -1:
-                return 2
+                self.state = Result.win_o
+                return self.state
             else:
-                return 3
+                if self.full:
+                    self.state = Result.draw
+                    return self.state
+                else:
+                    self.state = Result.not_finished
 
     def check_cols(self):
         for i in range(self.length):
@@ -99,11 +106,17 @@ class Board:
                 else:
                     pass
             if counter == int(self.length):
-                return 1
+                self.state = Result.win_x
+                return self.state
             elif counter == int(self.length) * -1:
-                return 2
+                self.state = Result.win_o
+                return self.state
             else:
-                return 3
+                if self.full:
+                    self.state = Result.draw
+                    return self.state
+                else:
+                    self.state = Result.not_finished
 
     def check_diagonal_l(self):
         counter = 0
@@ -116,11 +129,17 @@ class Board:
             else:
                 pass
         if counter == int(self.length):
-            return 1
+            self.state = Result.win_x
+            return self.state
         elif counter == int(self.length) * -1:
-            return 2
+            self.state = Result.win_o
+            return self.state
         else:
-            return 3
+            if self.full:
+                self.state = Result.draw
+                return self.state
+            else:
+                self.state = Result.not_finished
 
     def check_diagonal_r(self):
         counter = 0
@@ -133,27 +152,47 @@ class Board:
             else:
                 pass
         if counter == int(self.length):
-            return 1
+            self.state = Result.win_x
+            return self.state
         elif counter == int(self.length) * -1:
-            return 2
+            self.state = Result.win_o
+            return self.state
         else:
-            return 3
+            if self.full:
+                self.state = Result.draw
+                return self.state
+            else:
+                self.state = Result.not_finished
 
-def win_check():
-    result = new_board.check_rows()
-    if result !=3:
+    def win_check(self):
+        self.check_rows()
+        if self.state != Result.not_finished:
+            pass
+        else:
+            self.check_cols()
+            if self.state != Result.not_finished:
+                pass
+            else:
+                self.check_diagonal_l()
+                if self.state != Result.not_finished:
+                    pass
+                else:
+                    self.check_diagonal_r()
+
+
+def outcome(board):
+    board.win_check()
+    if board.state == Result.win_x:
+        print("Congratulations! The x-player won!")
+        end_game()
+    elif board.state == Result.win_o:
+        print("Congratulations! The o-player won!")
+        end_game()
+    elif board.state == Result.draw:
+        print("It's a draw!")
         end_game()
     else:
-        result = new_board.check_cols()
-        if result !=3:
-            end_game()
-        else:
-            result = new_board.check_diagonal_l()
-            if result !=3:
-                end_game()
-            else:
-                result = new_board.check_diagonal_r()
-    return result
+        print("Next move!")
 
 
 def end_game():
@@ -161,59 +200,43 @@ def end_game():
     exit()
 
 
-def play():
-    outcome = win_check()
-    while outcome == 3:
+def play(anyboard):
+    while anyboard.state == Result.not_finished:
         print("Mark x in: ")
         mark_row = int(input("row: "))-1
         mark_column = int(input("column: "))-1
 
-        while not new_board.squares[mark_row][mark_column].is_empty:
+        while not anyboard.squares[mark_row][mark_column].is_empty:
             print("This square is not empty! Chose another")
             print("Mark x in: ")
             mark_row = int(input("row: ")) - 1
             mark_column = int(input("column: ")) - 1
 
-        new_board.mark_x(mark_row, mark_column)
+        anyboard.mark_x(mark_row, mark_column)
         print("Thank you! See your board below: ")
-        new_board.printme()
+        anyboard.printme()
+        outcome(anyboard)
 
-        outcome = win_check()
-
-        if outcome == 3:
+        if anyboard.state == Result.not_finished:
             print("Mark o in: ")
             mark_row = int(input("row: "))-1
             mark_column = int(input("column: "))-1
 
-            while not new_board.squares[mark_row][mark_column].is_empty:
+            while not anyboard.squares[mark_row][mark_column].is_empty:
                 print("This square is not empty! Chose another")
                 print("Mark o in: ")
                 mark_row = int(input("row: ")) - 1
                 mark_column = int(input("column: ")) - 1
 
-            new_board.mark_o(mark_row, mark_column)
+            anyboard.mark_o(mark_row, mark_column)
             print("Thank you! See your board below: ")
-            new_board.printme()
-            outcome = win_check()
-            if outcome == 2:
+            anyboard.printme()
+            outcome(anyboard)
+            if anyboard.state != Result.not_finished:
                 end_game()
             else:
                 pass
 
-
-#def outcome():
-#    result = win_check()
-#    if result == Result.win_x:
-#       print("Congratulations! The x-player won!")
-#        end_game()
-#    elif result == Result.win_o:
-#        print("Congratulations! The o-player won!")
-#        end_game()
-#    elif result == Result.draw:
-#        print("It's a draw!")
-#        end_game()
-#    else:
-#        print("Next move!")
 
 while True:
     try:
@@ -231,4 +254,5 @@ print("Congratulations! You created " + str(side) + "-sided board, which has " +
 print("See your board below:")
 new_board.printme()
 
-play()
+
+play(new_board)
