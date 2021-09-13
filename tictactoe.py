@@ -205,7 +205,14 @@ def play(anyboard):
     while anyboard.state == Result.not_finished:
         print("Mark x in: ")
         mark_row = int(input("row: "))-1
+        while not mark_row in range (0,anyboard.length):
+            print("Please type a number between 1 and "+str(anyboard.length))
+            mark_row = int(input("row: ")) - 1
+
         mark_column = int(input("column: "))-1
+        while not mark_column in range(0, anyboard.length):
+            print("Please type a number between 1 and " + str(anyboard.length))
+            mark_column = int(input("row: ")) - 1
 
         while not anyboard.squares[mark_row][mark_column].is_empty:
             print("This square is not empty! Chose another")
@@ -243,11 +250,11 @@ while True:
     try:
         side = int(input("How wide board you want to create? Please, type natural number greater than 1: "))
         while side < 2:
-            print("You think you are a rebel, huh? Nice try!")
-            side = int(input("Please, type natural number: "))
+            print("We are not great in math, are we? N-A-T-U-R-A-L number!")
+            side = int(input("Please, type natural number greater than 1: "))
         break
     except ValueError:
-        print("We are not great in math, are we? N-A-T-U-R-A-L number!")
+        print("You think you are a rebel, huh? Nice try!")
 
 
 new_board = Board(side)
