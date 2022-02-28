@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from enum import Enum
 
 
@@ -9,23 +11,23 @@ class Result(Enum):
 
 
 class Square:
-    def __init__(self, num, col, row):
-        self.num = num
-        self.col = col
+    def __init__(self, number, column, row):
+        self.number = number
+        self.column = column
         self.row = row
         self.is_empty = True
-        self.char = '_'
+        self.character = '_'
 
     def __repr__(self):
-        return self.char
+        return self.character
 
     def set_x(self):
         self.is_empty = False
-        self.char = 'x'
+        self.character = 'x'
 
     def set_o(self):
         self.is_empty = False
-        self.char = 'o'
+        self.character = 'o'
 
 
 class Board:
@@ -181,6 +183,24 @@ class Board:
                             pass
 
 
+def create_game():
+    while True:
+        try:
+            side = int(input("How wide board you want to create? Please, type natural number greater than 1: "))
+            while side < 2:
+                print("We are not great in math, are we? N-A-T-U-R-A-L number!")
+                side = int(input("Please, type natural number greater than 1: "))
+            break
+        except ValueError:
+            print("You think you are a rebel, huh? Nice try!")
+
+    new_board = Board(side)
+    print("Congratulations! You created " + str(side) + "-sided board, which has " + str(side**2) + " squares.")
+    print("See your board below:")
+    new_board.printme()
+    return new_board
+
+
 def outcome(board):
     board.win_check()
     if board.state == Result.win_x:
@@ -198,6 +218,7 @@ def outcome(board):
 
 def end_game():
     print("Thank you! Your game has ended!")
+    just_waiting_input = input()
     exit()
 
 
@@ -245,22 +266,9 @@ def play(anyboard):
             else:
                 pass
 
+def main():
+    new_board = create_game()
+    play(new_board)
 
-while True:
-    try:
-        side = int(input("How wide board you want to create? Please, type natural number greater than 1: "))
-        while side < 2:
-            print("We are not great in math, are we? N-A-T-U-R-A-L number!")
-            side = int(input("Please, type natural number greater than 1: "))
-        break
-    except ValueError:
-        print("You think you are a rebel, huh? Nice try!")
-
-
-new_board = Board(side)
-print("Congratulations! You created " + str(side) + "-sided board, which has " + str(side**2) + " squares.")
-print("See your board below:")
-new_board.printme()
-
-
-play(new_board)
+if __name__ == '__main__':
+    main()
